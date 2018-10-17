@@ -1,0 +1,411 @@
+#include"include.h"
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<time.h>
+int dr();
+int wb();
+int sd();
+int rs=0;
+int flag1=0;
+int menustu();
+int time1()
+{
+	FILE *t1;
+	t1=fopen("log.log","a+");
+    	time_t timep;
+    	struct tm *p;
+    	time (&timep);
+   	p=gmtime(&timep);
+   	//printf("%d\n",p->tm_sec); /*获取当前秒*/
+   	//printf("%d\n",p->tm_min); /*获取当前分*/
+    	//printf("%d\n",8+p->tm_hour);/*获取当前时,这里获取西方的时间,刚好相差八个小时*/
+    	//printf("%d\n",p->tm_mday);/*获取当前月份日数,范围是1-31*/
+    	//printf("%d\n",1+p->tm_mon);/*获取当前月份,范围是0-11,所以要加1*/
+    	//printf("%d\n",1900+p->tm_year);/*获取当前年份,从1900开始，所以要加1900*/
+	fprintf(t1,"%d年%d月%d日 %d:%d:%d   ",1900+p->tm_year,1+p->tm_mon,p->tm_mday,8+p->tm_hour,p->tm_min,p->tm_sec);
+	fprintf(t1,"\n");
+	fclose(t1);
+}
+int stu1()
+{
+	menustu();
+	return rs;
+}
+int menustu()
+{
+	int x;
+
+	printf("╔╦╦╦╦╦╦╦╦╦学生信息管理╦╦╦╦╦╦╦╦╦╗\n");
+	printf("╠        1.初始学生信息导入    ╣\n");
+	printf("╠        2.新增学生信息        ╣\n");
+	printf("╠        3.修改学生信息        ╣\n");
+	printf("╠        4.删除学生信息        ╣\n");
+	printf("╠        5.显示现有学生信息    ╣\n");
+	printf("╠        6.查询学生信息        ╣\n");
+	printf("\033[32m");
+	printf("╠        7.返回菜单            ╣\n");
+	printf("\033[0m");
+	printf("╚╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╝\n");
+	if(flag1==0)
+	l:printf("请先初始化学生信息。\n");
+	printf("请输入选项: ");
+	scanf("%d",&x);
+	if(x==7)
+		return 0;
+	if(x!=1&&flag1==0)
+		goto l;
+	flag1=1;
+	
+	switch(x)
+	{
+		case 1 :printf("\033[2J");dr();printf("\033[2J");menustu();break;
+		case 2 :printf("\033[2J");xz();printf("\033[2J");menustu();break;
+		case 3 :printf("\033[2J");xg();printf("\033[2J");menustu();break;
+		case 4 :printf("\033[2J");sc();printf("\033[2J");menustu();break;
+		case 5 :printf("\033[2J");showa();printf("\033[2J");menustu();break;
+		case 6 :printf("\033[2J");cx();printf("\033[2J");menustu();break;
+		case 7 :printf("\033[2J");return 0;break;
+	
+	}
+	return 0;
+
+}
+int showa()
+{
+	int i;
+	char ch;
+	printf("学号	姓名	已选课程	已选课程总计学分\n");
+	for(i=0;i<rs;i++)
+	{
+		printf("%s	%s	%s	%d\n",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+	}
+	printf("显示完毕！输入r返回.");
+	ch=getchar();
+	while(ch!='r')
+	{
+		ch=getchar();
+	}
+	return 0;
+
+}
+int dr()
+{
+	printf("=======初始学生信息导入=======\n");
+	printf("请输入导入方式，手动输入（1），文本导入（2）.\n");
+	int x;
+	scanf("%d",&x);
+	switch(x)
+	{
+		case 1 : sd();break;
+		case 2 : wb();break;
+	}
+	
+}
+int wb()
+{
+	FILE *p;
+	char s[50];
+	int i=0;
+	printf("请输入文本名：");
+	scanf("%s",s);
+	if((p=fopen(s,"r+"))==NULL)
+	{
+		printf("error!\n");
+		return 0;
+	}
+ 	while(!feof(p))
+ 	{
+	 	
+		fscanf(p,"%s",stu[i].xh);
+		fscanf(p,"%s",stu[i].name);
+		fscanf(p,"%s",stu[i].cla);
+		fscanf(p,"%d",&stu[i].xf);
+		i++;	
+ 	}
+	rs=i-1;
+	fclose(p);
+	printf("是否显示现有学生信息？（y or n）\n");
+	getchar();
+	char ch;
+	scanf("%c",&ch);
+	if(ch=='y')
+	{
+		printf("学号	姓名	已选课程	已选课程总计学分\n");
+		for(i=0;i<rs;i++)
+		{
+			printf("%s	%s	%s	%d\n",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+		}
+	}
+	printf("文本导入成功！输入r返回. ");
+	ch=getchar();
+	while(ch!='r')
+	{
+		ch=getchar();
+	}
+	return 0;
+}
+int sd()
+{
+	int i=0;
+	printf("请输入学生人数: ");
+	scanf("%d",&rs);
+	printf("学号	姓名	已选课程	已选课程总计学分\n");
+	for(i=0;i<rs;i++)
+	{
+		scanf("%s	%s	%s	%d",stu[i].xh,stu[i].name,stu[i].cla,&stu[i].xf);
+		
+	}
+	printf("是否显示现有学生信息？（y or n）\n");
+	getchar();
+	char ch;
+	scanf("%c",&ch);
+	if(ch=='y')
+	{
+	printf("学号	姓名	已选课程	已选课程总计学分\n");
+		for(i=0;i<rs;i++)
+		{
+			printf("%s	%s	%s	%d\n",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+		}
+	}
+	printf("手动输入成功!输入r返回. ");
+	ch=getchar();
+	while(ch!='r')
+	{
+		ch=getchar();
+	}
+	return 0;		
+}
+int xz()
+{
+	int k,i,j;
+	FILE *p;
+	printf("=======新增学生信息=======\n");
+	printf("请输入新增的人数：");
+	scanf("%d",&k);
+	printf("请输入学生信息：\n");
+	printf("学号 姓名 已选课程 已选课程总计学分\n");
+	for(i=0;i<k;i++)
+	{
+		l : scanf("%s %s %s %d",stu[rs+i].xh,stu[rs+i].name,stu[rs+i].cla,&stu[rs+i].xf);
+		for(j=0;j<rs;j++)
+		{
+			if(strcmp(stu[j].xh,stu[rs+i].xh)==0)
+			{
+				printf("学号重复，请重新输入！\n");
+				goto l;
+			}
+		}
+		time1();
+		p=fopen("log.log","a+");
+		fprintf(p,"%s:  %s %s %s %d","New student",stu[rs+i].xh,stu[rs+i].name,stu[rs+i].cla,stu[rs+i].xf);
+		fprintf(p,"\n===========================\n");
+		fclose(p);
+		xzcla(stu[rs+i].cla);
+	}
+	rs=rs+k;
+	printf("现有学生人数：%d\n",rs);
+	printf("是否显示现有学生信息？（y or n）\n");
+	getchar();
+	char ch;
+	scanf("%c",&ch);
+	if(ch=='y')
+	{
+		printf("学号	姓名	已选课程	已选课程总计学分\n");
+		for(i=0;i<rs;i++)
+		{
+			printf("%s	%s	%s	%d\n",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+			
+		}
+	}
+	printf("新增成功!输入r返回. ");
+	ch=getchar();
+	while(ch!='r')
+	{
+		ch=getchar();
+	}
+	return 0;
+}
+int xzcla(char s[100])
+{
+	int i,p=0,q=0;
+	char s1[100][100];
+	printf("\n");
+	for(i=0;s[i];i++)
+	{
+		if(s[i]=='-')
+			{
+				p++;
+				q=0;
+			}
+		else 
+			s1[p][q++]=s[i];
+	}
+	for(i=0;i<=p;i++)
+	{
+		CLA *head;
+		head=cla->next;
+		while(head)
+		{	
+			if(strcmp(head->name,s1[i])==0)
+				head->rs++;
+			head=head->next;
+		}
+	}
+	printf("已选课程人数同步成功！\n");
+}
+int xg()
+{
+	char s[10];
+	FILE *p;
+	int i=0;
+	printf("=======修改学生信息=======\n");
+	printf("请输入要修改学生的学号：");
+	scanf("%s",s);
+	for(i=0;i<rs;i++)
+	{
+		if(strcmp(s,stu[i].xh)==0)
+		{
+			time1();
+			p=fopen("log.log","a+");
+			fprintf(p,"%s:  %s %s %s %d","Change student",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+			printf("请输入学生学号	姓名	已选课程	已选课程总计学分\n");
+			scanf("%s %s %s %d",stu[i].xh,stu[i].name,stu[i].cla,&stu[i].xf);	
+		fprintf(p,"  --->  %s %s %s %d",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+		fprintf(p,"\n===========================\n");
+		fclose(p);
+		}
+	}
+	printf("是否显示现有学生信息？（y or n）\n");
+	getchar();
+	char ch;
+	scanf("%c",&ch);
+	printf("学号	姓名	已选课程	已选课程总计学分\n");
+	if(ch=='y')
+	{
+		for(i=0;i<rs;i++)
+		{
+			printf("%s	%s	%s	%d\n",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+		}
+	}
+	printf("修改成功!输入r返回. ");
+	ch=getchar();
+	while(ch!='r')
+	{
+		ch=getchar();
+	}
+	return 0;
+}
+int sc()
+{
+	char s[10];
+	FILE *p;
+	int i=0,j,flag=0;
+	printf("=======删除学生信息=======\n");
+	printf("请输入要删除学生的学号：");
+	scanf("%s",s);
+	for(i=0;i<rs;i++)
+	{
+		if(strcmp(s,stu[i].xh)==0)
+		{
+			for(j=i;j<rs-1;j++)
+				stu[j]=stu[j+1];
+			sccla(stu[i].cla);
+			rs=rs-1;
+			time1();
+			p=fopen("log.log","a+");
+			fprintf(p,"%s:  %s %s %s %d","Delete student",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+			fprintf(p,"\n===========================\n");
+			fclose(p);
+		}
+	}
+	printf("现有学生人数：%d\n",rs);
+	printf("是否显示现有学生信息？（y or n）\n");
+	getchar();
+	char ch;
+	scanf("%c",&ch);
+	printf("学号	姓名	已选课程	已选课程总计学分\n");
+	if(ch=='y')
+	{
+		for(i=0;i<rs;i++)
+		{
+			printf("%s	%s	%s	%d\n",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+			flag=1;
+		}
+	}
+	if(flag==1)
+		printf("删除成功!输入r返回. ");
+	else if(flag==0)
+		printf("学生不存在.输入r返回.");
+	ch=getchar();
+	while(ch!='r')
+	{
+		ch=getchar();
+	}
+	return 0;
+}
+int sccla(char s[100])
+{
+	int i,p=0,q=0;
+	char s1[100][100];
+	for(i=0;s[i];i++)
+		printf("%c",s[i]);
+	printf("\n");
+	for(i=0;s[i];i++)
+	{
+		if(s[i]=='-')
+			{
+				p++;
+				q=0;
+			}
+		else 
+			s1[p][q++]=s[i];
+	}
+	for(i=0;i<=p;i++)
+	{
+		CLA *head;
+		head=cla->next;
+		while(head)
+		{	
+			if(strcmp(head->name,s1[i])==0)
+				head->rs--;
+			head=head->next;
+		}
+	}
+	printf("已选课程人数同步成功！\n");
+}
+int cx()
+{
+	char s[10];
+	FILE *p;
+	int i=0,j,flag=0;
+	char ch;
+	printf("=======查询学生信息=======\n");
+	printf("请输入要查询学生的学号：");
+	scanf("%s",s);
+	for(i=0;i<rs;i++)
+	{
+		if(strcmp(s,stu[i].xh)==0)
+		{	
+			printf("学号	姓名	已选课程	已选课程总计学分\n");
+			printf("%s	%s	%s	%d\n",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+		flag=1;
+		time1();
+		p=fopen("log.log","a+");
+		fprintf(p,"%s: %s %s %s %d","Find Student",stu[i].xh,stu[i].name,stu[i].cla,stu[i].xf);
+		fprintf(p,"\n===========================\n");
+		fclose(p);
+		}
+	}
+
+	if(flag==1)
+		printf("查询成功!输入r返回. ");
+	else 
+		printf("查无此人！输入r返回.");
+	ch=getchar();
+	while(ch!='r')
+	{
+		ch=getchar();
+	}
+	return 0;
+}
